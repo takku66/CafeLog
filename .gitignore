@@ -14,7 +14,7 @@ target/
 .factorypath
 .project
 .settings
-.springBeans
+.springBeansdo
 .sts4-cache
 #application.properties
 
