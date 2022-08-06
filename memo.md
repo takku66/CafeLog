@@ -1,19 +1,24 @@
 # web/ap単体の起動dockerコマンド
 docker build -t takku66/cafelog .
-docker run -dp 8888:8080 takku66/cafelog --name cafelog
+docker run -dp 8888:8080 --name cafelog-java takku66/cafelog
 
 # DBサーバーと接続するためのネットワーク設定
 docker network create cafelog-app
 
+##### powershellでやる場合
 docker run -it -d `
---network cafelog-app --network-alias postgres `
--v vol_scripts:/docker-entrypoint-initdb.d `
+--network cafelog-app --network-alias db `
+-v /$(pwd)/docker/pg/data:/var/lib/postgresql/data `
+-v /$(pwd)/docker/pg/scripts:/docker-entrypoint-initdb.d `
 --name cafelog-postgres `
 -e POSTGRES_PASSWORD=postgres `
 -e POSTGRES_DB=cafelog `
 -e POSTGRES_USER=postgres `
 -p 5433:5432 `
 postgres:14.0
+
+##### Git bashでやる場合
+docker run -it -d --network cafelog-app --network-alias db -v /$(pwd)/docker/pg/data:/var/lib/postgresql/data -v /$(pwd)/docker/pg/scripts:/docker-entrypoint-initdb.d --name cafelog-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cafelog -e POSTGRES_USER=postgres -p 5433:5432 postgres:14.0
 
 # docekr-composeを使って起動する場合の注意
 docker-compose -f docker-compose.yml up -d

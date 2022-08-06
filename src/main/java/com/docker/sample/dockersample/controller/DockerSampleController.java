@@ -3,6 +3,7 @@ package com.docker.sample.dockersample.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,10 +17,14 @@ public class DockerSampleController {
 
     @Autowired
     SampleRepository repository;
+    @Autowired
+    Environment environment;
     
     @RequestMapping(path = "/home", method = {RequestMethod.GET,RequestMethod.POST} )
     public ModelAndView init(){
         ModelAndView mv = new ModelAndView();
+
+        System.out.println(environment.getProperty("sayhello"));  // dev が出力される
 
         List<Sample> list = repository.findAll();
         int maxId = list.get(list.size()-1).getId();

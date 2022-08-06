@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/cafelog
+    url: jdbc:postgresql://db:5432/cafelog
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -9,5 +9,4 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
-
-sayhello: hello_local
+sayhello: hello_dev
