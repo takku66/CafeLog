@@ -39,3 +39,5 @@ build/
 
 ### NodeJS ###
 /node_modules/
+
+/docker/pg/data

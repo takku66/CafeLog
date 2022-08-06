@@ -5,5 +5,5 @@ ENV PATH $CATALINA_HOME/bin:$PATH
 ENV WAR_FILE target/*.war
 WORKDIR $CATALINA_HOME
 
-COPY ${WAR_FILE} webapps/sample.war
+COPY ${WAR_FILE} webapps/cafelog.war
 
