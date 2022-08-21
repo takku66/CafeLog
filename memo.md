@@ -29,4 +29,3 @@ docker-compose -f docker-compose.yml up -d
 そのため、docker-compose.xml内に２つ分のコンテナ起動のための記述を記載すると思うが、
 container-nameを、cafelog以外にしなければいけない
 
-

@@ -17,14 +17,20 @@ public class DockerSampleController {
 
     @Autowired
     SampleRepository repository;
-    @Autowired
-    Environment environment;
     
     @RequestMapping(path = "/home", method = {RequestMethod.GET,RequestMethod.POST} )
     public ModelAndView init(){
         ModelAndView mv = new ModelAndView();
 
-        System.out.println(environment.getProperty("sayhello"));  // dev が出力される
+
+
+        mv.setViewName("index.html");
+        return mv;
+    }
+
+    @RequestMapping(path = "/db/connect/test", method = {RequestMethod.GET,RequestMethod.POST} )
+    public ModelAndView dbConnectTest(){
+        ModelAndView mv = new ModelAndView();
 
         List<Sample> list = repository.findAll();
         int maxId = list.get(list.size()-1).getId();
@@ -37,4 +43,6 @@ public class DockerSampleController {
         mv.setViewName("index.html");
         return mv;
     }
+
+
 }

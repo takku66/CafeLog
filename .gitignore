@@ -41,3 +41,5 @@ build/
 /node_modules/
 
 /docker/pg/data
+
+shopdata.js

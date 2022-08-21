@@ -3,11 +3,236 @@
 <head>
     <meta charset="UTF-8" >
     <title>Cafe Log</title>
-    <!-- <script src="./sample.js"></script> -->
-    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
+    
+    <style>
+        :root {
+            --outset-gap: 0.7em;
+            --inset-gap: 0.5em;
+            --minimum-gap: 0.3em;
+            --active-color-b: lightblue;
+            --non-active: lightgray;
+            --shadow-color: lightgray;
+            --positive-color: bisque;
+        }
+        @media screen and (max-width:600px){
+            body {
+                display: flex;
+                gap: 0.7em;
+                flex-direction: column;
+            }
+            .travelModeUl {
+                height: 80px;
+                transition-property: all;
+                transition-duration: 0.2s;
+            }
+            .travelModeUl.expand {
+                height: 400px;
+            }
+            .map {
+                height: calc(100vh - 250px);
+            }
+            .result-list-bottom-area {
+                position: relative;
+                width: 100vw;
+            }
+            .expand-button {
+                position: absolute;
+                display: block;
+                padding: 2px 8px;
+                text-align: center;
+                top: -20px;
+                cursor: pointer;
+                border-radius: 16px;
+                box-shadow: 0 0 3px 2px var(--shadow-color);
+                left: calc(50% - 10px);
+                transition-property: all;
+                transition-duration: 0.2s;
+            }
+            .expand-button.isExpand {
+                transform: rotate(180deg);
+            }
+        }
+        @media screen and (min-width:601px){
+            body {
+                display: flex;
+                gap: 0.7em;
+                flex-direction: row;
+            }
+            .travelModeUl {
+                height: 90vh;
+            }
+            .map {
+                height: 100vh;
+            }
+            .expand-button {
+                display: none;
+            }
+        }
+        .map {
+            min-width: 300px;
+            width: 100vw;
+            max-width: 100%;
+            min-height: 300px;
+            max-height: 100%;
+        }
+        .search-box {
+            display: flex;
+            gap: 0.7em;
+            flex-direction: column;
+            width: 30%;
+            max-width: 300px;
+        }
+        .search-button {
+            border: 0;
+            border-radius: 4px;
+            box-shadow: 0 0 4px 2px lightgray;
+            background-color: bisque;
+            width: 50px;
+            cursor: pointer;
+        }
+        .limit-value {
+
+        }
+        .radio-travel-mode + label  {
+            background-color: lightgray;
+            border-radius: 4px;
+            box-shadow: 0 0 4px 2px lightgray;
+            padding: 0.2em 0.5em;
+            cursor: pointer;
+        }
+        .radio-travel-mode:checked + label {
+            background-color: lightblue;
+        }
+        .radio-travel-mode {
+            display: none;
+        }
+        .filter-icon {
+            width: 1em;
+            height: 1.5em;
+            vertical-align: middle;
+        }
+        .positionName,
+        .distance,
+        .duration {
+            padding: var(--inset-gap);
+        }
+        .forwardMap {
+            width: 1.2em;
+            height: 1.2em;
+            cursor: pointer;
+            vertical-align: middle;
+        }
+        .travelMode.label {
+            background-color: bisque;
+            display: none;
+            padding: var(--minimum-gap);
+        }
+        .travelModeUl {
+            list-style: none;
+            padding: 0;
+            overflow: auto;
+        }
+
+        .result-list li {
+            list-style: none;
+            border-bottom: 1px solid var(--shadow-color);
+        }
+        .result-list li span {
+            display: inline-block;
+        }
+        .result-list .positionName {
+            min-width: 200px;
+            width: 20%;
+            text-align: left;
+        }
+        .result-list .distance {
+            min-width: 100px;
+            width: 10%;
+            text-align: right;
+        }
+        .result-list .duration {
+            display: none;
+            min-width: 100px;
+            width: 10%;
+        }
+        .distance-sort-box .sort-line-1,
+        .distance-sort-box .sort-line-2,
+        .distance-sort-box .sort-line-3 {
+            display: inline-block;
+            height: 2px;
+            border: 0;
+            background-color: rgb(30,30,30);
+        }
+        .result-list {
+            min-width: 400px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello World!</h1>
-    <!-- <div id="sample"></div> -->
+    <div id="search-box" class="search-box">
+        <label class="start-position-area hidden">
+            <input type="text" id="txt-start-position" class="txt-start-position" placeholder="出発地点の住所" />
+            <!-- <button type="button" id="address-search-button" class="address-search-button" >Map上で検索</button> -->
+            <!-- このボタンを押すと地図上で検索され、その検索でヒットしたところを出発地点にする的な -->
+            <input type="checkbox" id="chk-current-position" class="chk-current-position" onchange="toggleStartPosition()">現在地</button>
+        </label>
+        <label class="limit hidden">
+            <input type="number" id="limit-value" class="limit-value" />
+            <select id="limit-type">
+                <option value="distance">m</option>
+                <option value="time">分</option>
+            </select>
+            以内
+        </label>
+        <!-- <label>
+            <input type="radio" id="rd-driving" class="radio-travel-mode" name="travel-mode" value="driving"><label for="rd-driving">車</label>
+            <input type="radio" id="rd-transit" class="radio-travel-mode" name="travel-mode" value="transit"><label for="rd-transit">交通機関</label>
+            <input type="radio" id="rd-bicycling" class="radio-travel-mode" name="travel-mode" value="bicycling"><label for="rd-bicycling">自転車</label>
+            <input type="radio" id="rd-walking" class="radio-travel-mode" name="travel-mode" value="walking"><label for="rd-walking">徒歩</label>
+        </label> -->
+        <button type="button" id="search-button" class="search-button" onclick="search()">検索</button>
+    </div>
+    <ul id="result-list" class="result-list">
+        <li>
+            <img th:src="@{/img/filter_icon.svg}" class="filter-icon" />
+            <span class="distance-filter-box">
+                <select id="distance-filter-select">
+                    <option value="-1">距離指定なし</option>
+                    <option value="500">500 m以内</option>
+                    <option value="800">800 m以内</option>
+                    <option value="1000">1 km以内</option>
+                    <option value="3000">3 km以内</option>
+                    <option value="5000">5 km以内</option>
+                    <option value="10000">10 km以内</option>
+                    <option value="20000">20 km以内</option>
+                    <option value="30000">30 km以内</option>
+                    <option value="50000">50 km以内</option>
+                </select>
+            </span>
+            <span class="distance-sort-box">
+                <select id="distance-sort-select">
+                    <option value="asc">距離が近い順</option>
+                    <option value="desc">距離が遠い順</option>
+                </select>
+            </span>
+        </li>
+    </ul>
+    <div id="result-list-bottom-area" class="result-list-bottom-area">
+        <span id="expand-button" class="expand-button">∨</span>
+    </div>
+    <div id="map" class="map"></div>
+
+    <script th:src="@{/js/shopdata.js}"></script>
+    <script th:src="@{/js/gmapapi.js}"></script>
+    <script th:src="@{/js/index.js}"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoqzkjZuDiL2wOtclu9-3cW7iN4tFr2Lc&callback=initMap"></script> -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoqzkjZuDiL2wOtclu9-3cW7iN4tFr2Lc&callback=initMap"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoqzkjZuDiL2wOtclu9-3cW7iN4tFr2Lc"> -->
+    
 </body>
 </html>
+
+

@@ -1,0 +1,58 @@
+@startuml Cafe Log ER
+
+hide circle
+
+skinparam linetype ortho
+
+entity "座標" as point {
+    * point_id : number : 座標ID
+    --
+    latitude : double:緯度
+    longitude : double:経度
+}
+
+entity "お気に入りのカフェ・喫茶店" as favorite_cafe {
+    * cafe_id : number : 店舗ID
+    --
+    * point_id : number : 座標ID <<FK>>
+    cafe_name : text : 店舗名
+    cafe_address : text : 店舗住所
+}
+
+entity "よく利用する出発地点" as start_point {
+    * start_point_id : number : 出発地点
+    --
+    * point_id : number : 座標ID <<FK>>
+    point_name : text : 出発地点名
+}
+
+entity "検索履歴" as search_history {
+    * search_id : number : 検索ID
+    --
+    start_point : number : 出発地点
+    distination_point : 到着地点
+}
+
+entity "出発地点からの距離" as distance {
+    * start_point : number : 出発地点 <<FK>>
+    * distination_point : number : 到着地点 <<FK>>
+    --
+    distance : number : 距離
+}
+
+entity "出発地点からの時間" as duration {
+    * start_point : number : 出発地点 <<FK>>
+    * destination_point : number : 到着地点 <<FK>>
+    --
+    duration : number : 時間
+}
+
+
+start_point ||--o{ distance
+start_point ||--o{ duration
+favorite_cafe ||--o{ distance
+favorite_cafe ||--o{ duration
+start_point ||--|| point
+favorite_cafe ||--|| point
+
+@enduml

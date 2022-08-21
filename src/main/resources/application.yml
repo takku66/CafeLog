@@ -9,5 +9,3 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
-
-sayhello: hello_local

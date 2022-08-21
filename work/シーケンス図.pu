@@ -1,0 +1,19 @@
+@startuml Cafe Logシーケンス図
+participant ブラウザ as b
+participant サーバー as s
+participant GoogleMapAPI as gma
+b -> s: 初期表示リクエスト
+b <- s: レスポンス
+b -> s: 現在地からの範囲検索
+alt まだカフェリストを取得していない場合\nカフェリストの取得ボタンをクリックした場合
+    b -> s: お気に入りのカフェリストを取得
+    b <- s: カフェリストを返却
+end
+b -> b: APIリクエスト用のデータを作成
+b -> gma: 現在地点とカフェリストでMatrixAPI呼び出し
+b <- gma: 現在地点とカフェリストの距離・時間を返却
+b -> s: 受け取ったデータをＤＢに登録
+b -> b: 指定の時間内で行ける\nカフェリストをリストアップ
+b -> b: マーカーをつける
+
+@enduml
