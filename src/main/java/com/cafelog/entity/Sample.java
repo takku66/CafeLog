@@ -1,4 +1,4 @@
-package com.docker.sample.dockersample.entity;
+package com.cafelog.entity;
 
 import java.io.Serializable;
 

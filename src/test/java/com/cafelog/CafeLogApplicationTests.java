@@ -1,10 +1,10 @@
-package com.docker.sample.dockersample;
+package com.cafelog;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DockerSampleApplicationTests {
+class CafeLogApplicationTests {
 
 	// @Test
 	// void contextLoads() {

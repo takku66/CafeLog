@@ -11,34 +11,9 @@ async function search(){
 
 	// デフォルトの出発地点は現在地
 	startPositionValue = await getCurrentLatLng();
-	// const currentPosition = document.getElementById("chk-current-position");
-	// let startPositionValue = {};
-	// if(currentPosition.checked){
-	// }else{
-	// 	startPositionValue = document.getElementById("txt-start-position").value;
-	// }
 	
 	// TRANSITオプションが使えないので、方針転換。距離だけの算出のため、徒歩だけでよい
-	// const radioTravelModes = document.getElementsByClassName("radio-travel-mode");
 	let selectedTravelMode = OPTIONS.TRAVEL_MODE.walking; // デフォルトは徒歩
-	// for(let mode of radioTravelModes){
-	// 	if(mode.checked){
-	// 		selectedTravelMode = OPTIONS.TRAVEL_MODE[mode.value];
-	// 	}
-	// }
-
-	// TODO: 暫定対応
-	// NOTE: TRANSITオプションは、日本国内では使用できないらしい。。。
-	// const transitOptions = {};
-	// switch(selectedTravelMode){
-	// 	case OPTIONS.TRAVEL_MODE.transit:
-	// 		transitOptions.arrivalTime = new Date(2022, 8, 15, 21, 00, 00);
-	// 		// transitOptions.departureTime = new Date(2022, 8, 15, 11, 00, 00);
-	// 		transitOptions.modes = ["RAIL", "BUS"];
-	// 		// transitOptions.routingPreference: TransitRoutePreference
-	// 		break;
-	// }
-
 
 	const limitValue = document.getElementById("limit-value").value;
 	const limitType = document.getElementById("limit-type");
@@ -138,10 +113,6 @@ const MatrixOptions = function(){
 		this.travelMode = travelMode;
 		return this;
 	}
-	// this.setTransitOptions = function(transitOptions){
-	// 	this.transitOptions = transitOptions;
-	// 	return this;
-	// }
 	this.setCallBack = function(callback){
 		this.callback = callback;
 		return this;

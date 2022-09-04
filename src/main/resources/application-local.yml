@@ -1,0 +1,7 @@
+spring:
+  devtools:
+    restart:
+      enabled: true
+google:
+  map:
+    develop-mode: true

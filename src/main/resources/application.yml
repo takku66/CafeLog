@@ -1,9 +1,11 @@
 spring:
+  profiles:
+    active: 
+      - security
+      - local
   datasource:
     url: jdbc:postgresql://localhost:5433/cafelog
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+    driverClassName: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true

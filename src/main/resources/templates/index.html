@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8" >
     <title>Cafe Log</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+	<meta name="_csrf_parameter" content="_csrf" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<meta name="_csrf" th:content="${_csrf.token}" />
+
     <style>
         :root {
             --outset-gap: 0.7em;
@@ -225,12 +229,19 @@
     </div>
     <div id="map" class="map"></div>
 
+    <input type="hidden" id="googleMapApiKey" th:value="${googleMapApiKey}" />
+
     <script th:src="@{/js/shopdata.js}"></script>
     <script th:src="@{/js/gmapapi.js}"></script>
     <script th:src="@{/js/index.js}"></script>
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoqzkjZuDiL2wOtclu9-3cW7iN4tFr2Lc&callback=initMap"></script> -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoqzkjZuDiL2wOtclu9-3cW7iN4tFr2Lc&callback=initMap"></script>
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoqzkjZuDiL2wOtclu9-3cW7iN4tFr2Lc"> -->
+    
+    <script>
+        const gmapsc = document.createElement("script");
+        const apikey = document.getElementById("googleMapApiKey");
+        gmapsc.src = `https://maps.googleapis.com/maps/api/js?key=${apikey.value}&callback=initMap`;
+        document.body.appendChild(gmapsc);
+    </script>
+    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoqzkjZuDiL2wOtclu9-3cW7iN4tFr2Lc&callback=initMap"></script> -->
     
 </body>
 </html>
