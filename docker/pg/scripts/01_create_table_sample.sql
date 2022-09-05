@@ -1,5 +1,3 @@
-\c cafelog
-
 create table sample (
     id integer ,
     name varchar(500),

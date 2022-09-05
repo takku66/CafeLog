@@ -11,3 +11,16 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    org:
+      springframework: WARN
+    com:
+      cafelog:
+        mapper: 
+          FavoritesMapper: DEBUG
+          CafeLogUserMapper: DEBUG

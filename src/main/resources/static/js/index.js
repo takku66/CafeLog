@@ -23,7 +23,7 @@ async function search(){
 	const MAX_REQUEST = 25;
 	for(let i = 0, max = shopdata.length; i < max; i+=MAX_REQUEST){
 		const requestData = shopdata.slice(i, i + MAX_REQUEST);
-		
+		const sliceDestination = destinationList.slice(i, i + MAX_REQUEST);
 		callDistanceMatrix(
 			new MatrixOptions().setOrigins([startPositionValue])
 								.setDestinations(requestData)
@@ -34,7 +34,7 @@ async function search(){
 										throw new Error("Distance Matrix処理中にエラーが発生しました。");
 									}
 									console.log(response);
-									cafeList.drawDistanceList(response, destinationList, selectedTravelMode);
+									cafeList.drawDistanceList(response, sliceDestination, selectedTravelMode);
 								})
 		);
 

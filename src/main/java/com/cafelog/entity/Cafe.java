@@ -23,9 +23,9 @@ public class Cafe implements Serializable {
     private String name;
 
     @Column(name = "latitude", nullable = false)
-    private double lat;
+    private Double lat;
 
     @Column(name = "longitude", nullable = false)
-    private double lng;
+    private Double lng;
 
 }

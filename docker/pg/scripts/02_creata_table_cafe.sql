@@ -1,5 +1,3 @@
-\c cafelog
-
 create table cafe (
 cafe_id serial ,
 name varchar(500),
