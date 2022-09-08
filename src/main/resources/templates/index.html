@@ -230,19 +230,19 @@
     <div id="map" class="map"></div>
 
     <input type="hidden" id="googleMapApiKey" th:value="${googleMapApiKey}" />
+    <input type="hidden" id="contextRoot" th:value="${#httpServletRequest.contextPath}" />
 
-    <script th:src="@{/js/shopdata.js}"></script>
     <script th:src="@{/js/gmapapi.js}"></script>
-    <script th:src="@{/js/index.js}"></script>
-    
     <script>
         const gmapsc = document.createElement("script");
         const apikey = document.getElementById("googleMapApiKey");
         gmapsc.src = `https://maps.googleapis.com/maps/api/js?key=${apikey.value}&callback=initMap`;
         document.body.appendChild(gmapsc);
+
+        CONTEXT_ROOT = document.getElementById("contextRoot").value;
     </script>
-    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAoqzkjZuDiL2wOtclu9-3cW7iN4tFr2Lc&callback=initMap"></script> -->
-    
+    <script th:src="@{/js/shopdata.js}"></script>
+    <script th:src="@{/js/index.js}"></script>    
 </body>
 </html>
 

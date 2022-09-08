@@ -11,16 +11,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.cafelog.controller.LogoutHandler;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig {
 
     private final LogoutHandler logoutHandler;
-
-    public WebSecurityConfig(LogoutHandler logoutHandler) {
-        this.logoutHandler = logoutHandler;
-    }
-
 
     @Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

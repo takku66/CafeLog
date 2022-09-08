@@ -1,11 +1,12 @@
 spring:
   profiles:
-    active: 
-      - security
-      - local
-  datasource:
-    url: jdbc:postgresql://localhost:5433/cafelog
-    driverClassName: org.postgresql.Driver
+    group:
+      local:
+        - local
+        - security
+      prd:
+        - prd
+        - security
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
@@ -14,7 +15,6 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-
 logging:
   level:
     org:

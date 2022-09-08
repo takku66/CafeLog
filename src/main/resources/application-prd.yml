@@ -1,0 +1,4 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/cafelog
+    driverClassName: org.postgresql.Driver
