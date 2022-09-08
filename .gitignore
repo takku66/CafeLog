@@ -49,3 +49,5 @@ application-security.yml
 
 gcp-cafelog
 gcp-cafelog.pub
+
+passphrase.txt

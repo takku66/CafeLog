@@ -1,4 +1,3 @@
-// import * as GMap from "./gmapapi.js";
 
 async function search(){
 	// 開始地点の住所でGoogoleMapAPIにリクエストし、
@@ -350,3 +349,4 @@ class CafeList {
 
 const cafeList = new CafeList();
 
+search();
