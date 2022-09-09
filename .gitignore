@@ -44,7 +44,6 @@ build/
 
 
 11_insert_cafe_data.sql
-shopdata.js
 application-security.yml
 
 gcp-cafelog
