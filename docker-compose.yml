@@ -1,6 +1,6 @@
 version: '3.6'
 services:
-  app:
+  web:
     container_name: cafelog-java
     image: takku66/cafelog
     ports:
@@ -19,5 +19,22 @@ services:
       POSTGRES_DB: cafelog
     ports:
       - 5433:5432
-  
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+            - 80:80
+            - 443:443
+    links:
+            - web
+    restart: always
+    environment:
+      DOMAINS: '35.197.22.32 -> http://web:8080'
+      # DOMAINS: 'localhost -> http://web:8080'
+      STAGE: 'production' # Don't use production until staging works
+      #FORCE_RENEW: 'true'
+    container_name: https-portal
+    volumes:
+            - ./ssl_certs:/var/lib/https-portal
+volumes:
+    ssl_certs:
   
