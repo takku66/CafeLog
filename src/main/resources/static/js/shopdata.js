@@ -20,6 +20,7 @@ function fetchShopData(){
     }).then((data) => {
         console.log(data);
         shopdata = JSON.parse(data);
+        search();
     }).catch((reason) => {
         console.log(reason);
     });

@@ -349,4 +349,4 @@ class CafeList {
 
 const cafeList = new CafeList();
 
-search();
+
