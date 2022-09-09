@@ -7,4 +7,4 @@ ENV SPRING_PROFILES_ACTIVE prd
 WORKDIR $CATALINA_HOME
 
 COPY ${WAR_FILE} webapps/cafelog.war
-
+RUN sudo apt install less
