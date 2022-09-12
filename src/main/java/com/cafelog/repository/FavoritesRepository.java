@@ -1,4 +1,4 @@
-package com.cafelog.mapper;
+package com.cafelog.repository;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Select;
 import com.cafelog.entity.Cafe;
 
 @Mapper
-public interface FavoritesMapper {
+public interface FavoritesRepository {
 
     @Select("""
         select cafe.cafe_id, cafe.name, cafe.latitude as lat, cafe.longitude as lng

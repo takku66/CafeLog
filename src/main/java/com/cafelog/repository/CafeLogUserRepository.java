@@ -1,4 +1,4 @@
-package com.cafelog.mapper;
+package com.cafelog.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Select;
 import com.cafelog.entity.CafeLogUser;
 
 @Mapper
-public interface CafeLogUserMapper {
+public interface CafeLogUserRepository {
     
     
     @Select("""

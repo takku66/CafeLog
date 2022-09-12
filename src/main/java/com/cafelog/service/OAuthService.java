@@ -7,6 +7,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -23,9 +24,21 @@ public class OAuthService {
     
     private final OAuth2AuthorizedClientService clientService;
 
-    public String getUserInfoUri(){
+    public boolean isAuthenticated(){
+        OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        return authentication.isAuthenticated();
+    }
+
+    public boolean isNotAuthenticated(){
+        return this.isAuthenticated() == false;
+    }
+
+    public String getUserInfoUri() throws IllegalStateException {
         
         OAuth2AuthorizedClient client = getClient();
+        if(client == null) {
+            throw new IllegalStateException("Not found client.");
+        }
         return client.getClientRegistration()
                         .getProviderDetails()
                         .getUserInfoEndpoint()
@@ -34,6 +47,9 @@ public class OAuthService {
 
     public OAuth2AuthorizedClient getClient(){
         OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        return getClient(authentication);
+    }
+    public OAuth2AuthorizedClient getClient(OAuth2AuthenticationToken authentication){
         return clientService.loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
     }
 

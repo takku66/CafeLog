@@ -6,12 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" >
 </head>
 <body>
-    <div sec:authorize="!isAuthenticated()">
-        <a th:href="@{/oauth2/authorization/auth0}">Log In</a>
-    </div>
-    <div sec:authorize="isAuthenticated()">
-        <p>You are logged in!</p>
-    </div>
+    <a th:href="@{/oauth2/authorization/auth0}">Cafe Logへログイン</a>
 </body>
 </html>
 

@@ -43,7 +43,8 @@ build/
 /docker/pg/data
 
 
-11_insert_cafe_data.sql
+90_insert_cafe_data.sql
+91_insert_api_manage.sql
 application-security.yml
 
 gcp-cafelog
