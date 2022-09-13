@@ -12,10 +12,9 @@ public interface FavoritesRepository {
 
     @Select("""
         select cafe.cafe_id, cafe.name, cafe.latitude as lat, cafe.longitude as lng
-        from favorites as fav
+        from (select * from favorites where user_id=#{user_id}) as fav
         left outer join cafe
-            on fav.user_id = #{user_id} and
-                fav.cafe_id = cafe.cafe_id
+            on fav.cafe_id = cafe.cafe_id
             """)
     public List<Cafe> findByUserId(int userId);
 }
