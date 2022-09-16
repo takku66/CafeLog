@@ -7,6 +7,7 @@ services:
       - 8888:8080
     depends_on:
       - db
+    restart: always
   db:
     container_name: cafelog-postgres
     image: postgres:14.0
@@ -19,6 +20,7 @@ services:
       POSTGRES_DB: cafelog
     ports:
       - 5433:5432
+    restart: always
   https-portal:
     image: steveltn/https-portal:1
     ports:
