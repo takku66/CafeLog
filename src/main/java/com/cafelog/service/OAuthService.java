@@ -7,7 +7,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -15,6 +14,8 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
+
+import com.cafelog.exception.NotAuthenticatedException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,11 +34,11 @@ public class OAuthService {
         return this.isAuthenticated() == false;
     }
 
-    public String getUserInfoUri() throws IllegalStateException {
+    public String getUserInfoUri() throws NotAuthenticatedException {
         
         OAuth2AuthorizedClient client = getClient();
         if(client == null) {
-            throw new IllegalStateException("Not found client.");
+            throw new NotAuthenticatedException();
         }
         return client.getClientRegistration()
                         .getProviderDetails()
@@ -63,7 +64,7 @@ public class OAuthService {
         return restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
     }
 
-    public Map<String, String> getUserInfoMap(){
+    public Map<String, String> getUserInfoMap() throws NotAuthenticatedException {
         OAuth2AuthorizedClient client = getClient();
         String infoUri = getUserInfoUri();
 
@@ -74,10 +75,10 @@ public class OAuthService {
         return (Map<String, String>)response.getBody();
     }
 
-    public String getName(){
+    public String getName() throws NotAuthenticatedException {
         return getUserInfoMap().get("name");
     }
-    public String getEmail(){
+    public String getEmail() throws NotAuthenticatedException {
         return getUserInfoMap().get("email");
     }
 

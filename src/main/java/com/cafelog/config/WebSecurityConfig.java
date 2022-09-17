@@ -32,7 +32,7 @@ public class WebSecurityConfig {
             .oauth2Login()
                 .loginPage("/login")
                 .successHandler(successHandler)
-                .defaultSuccessUrl("/")
+                // .defaultSuccessUrl("/")
             .and()
             .logout()
                 .logoutSuccessUrl("/login")

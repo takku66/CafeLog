@@ -30,8 +30,8 @@ services:
             - web
     restart: always
     environment:
-      DOMAINS: '35.197.22.32 -> http://web:8080'
-      # DOMAINS: 'localhost -> http://web:8080'
+      # DOMAINS: '35.197.22.32 -> http://web:8080'
+      DOMAINS: 'localhost -> http://web:8080'
       STAGE: 'production' # Don't use production until staging works
       #FORCE_RENEW: 'true'
     container_name: https-portal

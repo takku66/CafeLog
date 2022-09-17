@@ -7,4 +7,4 @@ spring:
     driverClassName: org.postgresql.Driver
 google:
   map:
-    develop-mode: true
+    develop-mode: false

@@ -26,7 +26,7 @@ public class UserSessionRepository {
         return this.cafeLogUser != null;
     }
 
-    public boolean isTimeout(){
+    public boolean isNotExists(){
         return this.cafeLogUser == null || this.cafeLogUser.getUserId() == null;
     }
 

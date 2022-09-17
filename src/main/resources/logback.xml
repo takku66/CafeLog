@@ -1,4 +1,7 @@
 <configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
     <property name="logDir" value="./logs/" />
     <property name="fileName" value="cafelog.log" />
     <property name="error_fileName" value="error.log" />
@@ -30,20 +33,14 @@
         </encoder>
     </appender>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${format1}</pattern>
-        </encoder>
-    </appender>
-
-    <root>
+    <root levet="INFO">
         <appender-ref ref="FILE" />
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="CONSOLE" />
     </root>
 
     <root level="error">
         <appender-ref ref="ERR_FILE" />
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="CONSOLE" />
     </root>
 
 </configuration>

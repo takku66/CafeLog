@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.cafelog.entity.Cafe;
-import com.cafelog.entity.CafeLogUser;
+import com.cafelog.exception.NotAvailableUserException;
 import com.cafelog.repository.UserSessionRepository;
 import com.cafelog.service.ApiLimitService;
 import com.cafelog.service.CafeLogService;
-import com.cafelog.service.OAuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,44 +22,18 @@ import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequiredArgsConstructor
-public class CafeLogController { 
+public class HomeController { 
 
     private final CafeLogService cafeLogService;
-    private final OAuthService oauthService;
     private final UserSessionRepository userSession;
     private final ApiLimitService apiLimitService;
     
-    @RequestMapping(path = "/login", method = {RequestMethod.GET,RequestMethod.POST} )
-    public ModelAndView login() {
-
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("login.html");
-        return mv;
-    }
     
     @RequestMapping(path = "/", method = {RequestMethod.GET,RequestMethod.POST} )
-    public ModelAndView init() {
+    public ModelAndView init() throws NotAvailableUserException {
 
         ModelAndView mv = new ModelAndView();
 
-        if(oauthService.isNotAuthenticated()){
-            mv.setViewName("redirect:/login");
-            return mv;
-        }
-
-        try{
-            if(oauthService.isAuthenticated() && userSession.isTimeout()){
-                Map<String, String> userInfoMap = oauthService.getUserInfoMap();
-                String email = userInfoMap.get("email");
-                CafeLogUser user = cafeLogService.searchUserByEmail(email);
-                userSession.save(user);
-            }
-        }catch(IllegalStateException e){
-            mv.setViewName("redirect:/login");
-            return mv;
-        }
-        
-        
         mv.addObject("googleMapApiKey", cafeLogService.getApiKeyWithDevMode());
 
         mv.setViewName("index.html");
@@ -71,12 +44,6 @@ public class CafeLogController {
     @RequestMapping(path = "/allcafe", method = {RequestMethod.GET, RequestMethod.POST} )
     public String fetchCafeData() throws JsonProcessingException{
 
-        // TODO: Aspectで共通処理化
-        if(userSession.isTimeout()){
-            Map<String, String> map = new HashMap<>();
-            map.put("error", "セッションがありません。");
-            return toJson(map);
-        }
     
         // TODO: APIの回数制限チェックを別で切り出したい
         // TODO:apiIdを定数から取得するようにする
@@ -89,7 +56,7 @@ public class CafeLogController {
 
 
         // List<Cafe> list = cafeRepository.findAll();
-        List<Cafe> cafedata = cafeLogService.searchFavoritesCafe(userSession.getUser().getUserId());
+        List<Cafe> cafedata = cafeLogService.searchFavoriteCafes(userSession.getUser().getUserId());
         return toJson(cafedata);
     }
 

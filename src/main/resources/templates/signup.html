@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" >
+    <title>Cafe Log</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+    <meta name="_csrf_parameter" content="_csrf" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<meta name="_csrf" th:content="${_csrf.token}" />
+</head>
+<body>
+    <form name="cafelogForm" th:action="@{/signup}" method="post">
+        <input type="text" class="cafeLogUserName" name="cafeLogUserName" th:value="${cafeLogUserName}" placeholder="名前を入力" />
+        <button type="submit" id="btn-register">この名前で登録</button>
+    </form>
+</body>
+</html>
+
+
