@@ -34,6 +34,7 @@ async function search(){
 									}
 									console.log(response);
 									cafeList.drawDistanceList(response, sliceDestination, selectedTravelMode);
+
 								})
 		);
 
@@ -45,7 +46,7 @@ async function search(){
 			position: {lat: destination.lat, lng: destination.lng}, 
 			icon: {
 				url: "./img/cafe.png", 
-				scaledSize: new google.maps.Size(30, 30)
+				scaledSize: new google.maps.Size(50, 50)
 			},
 			infoWindow: new InfoWindowCreator(destination.name, destination.name).create()
 		});
@@ -66,6 +67,31 @@ function toggleStartPosition(){
 	}else{
 		txtFreePosition.disabled = false;
 	}
+}
+
+function apiCount(){
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || "";
+    const token = document.querySelector('meta[name="_csrf"]')?.content || "";
+    const url = (CONTEXT_ROOT == "/" ? "" : CONTEXT_ROOT) + "/countapi";
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "charset": "UTF-8",
+            "Content-Type": "application/json",
+            [csrfHeader]: token,
+        },
+    }).then((res) => {
+        if (!res.ok) {
+            throw new Error(`${res.status}${res.statusText}`);
+        }
+        console.log(res);
+        return res.text();
+    }).then((data) => {
+        console.log(data);
+        search();
+    }).catch((reason) => {
+        console.log(reason);
+    });
 }
 
 const OPTIONS = {
