@@ -44,7 +44,7 @@ async function search(){
 			map: map, 
 			position: {lat: destination.lat, lng: destination.lng}, 
 			icon: {
-				url: "./img/cafe_icon.svg", 
+				url: "./img/cafe.png", 
 				scaledSize: new google.maps.Size(30, 30)
 			},
 			infoWindow: new InfoWindowCreator(destination.name, destination.name).create()
@@ -219,7 +219,7 @@ class CafeList {
 				// GoogleMapへの遷移用画像
 				forwardMap.src = "./img/forward.svg";
 				forwardMap.addEventListener("click", () => {
-					openDirectionMap(originAddress, destinationAddresses[i]);
+					openDirectionMap(originAddress, destinationAddresses[i] + ` ${destination.name}`);
 				});
 			}else{
 				distanceSpan.textContent = `経路が見つかりませんでした。`;
