@@ -9,7 +9,7 @@ async function search(){
 	clearAllMarker();
 
 	// デフォルトの出発地点は現在地
-	startPositionValue = await getCurrentLatLng();
+	startPositionValue = await getCurrentLatLng("35.6809591", "139.7673068");
 	
 	// TRANSITオプションが使えないので、方針転換。距離だけの算出のため、徒歩だけでよい
 	let selectedTravelMode = OPTIONS.TRAVEL_MODE.walking; // デフォルトは徒歩
@@ -29,11 +29,11 @@ async function search(){
 								.setTravelMode(selectedTravelMode)
 								// .setTransitOptions(transitOptions)
 								.setCallBack((response, status) => {
+									console.log(response);
+									cafeList.drawDistanceList(response, sliceDestination, startPositionValue, selectedTravelMode);
 									if (status !== "OK") {
 										throw new Error("Distance Matrix処理中にエラーが発生しました。");
 									}
-									console.log(response);
-									cafeList.drawDistanceList(response, sliceDestination, selectedTravelMode);
 
 								})
 		);
@@ -175,12 +175,12 @@ class CafeList {
 		});
 	}
 
-	drawDistanceList(matrixResponse, destinationsParam, travelMode){
+	drawDistanceList(matrixResponse, destinationsParam, startPositionValue, travelMode){
 
 		// 移動手段用のボックスがなかったら作成する
 		const travelModeUl = this.createBoxIfNotExists(travelMode);
 
-		this.createCafeList(matrixResponse, destinationsParam, travelModeUl);
+		this.createCafeList(matrixResponse, destinationsParam, startPositionValue, travelModeUl);
 
 		this.sort();
 
@@ -206,13 +206,21 @@ class CafeList {
 		return travelModeUl;
 	}
 
-	createCafeList(matrixResponse, destinationsParam, listByTravelMode){
-		const rows = matrixResponse.rows[0];
-		const originAddress = matrixResponse.originAddresses[0];
-		const destinationAddresses = matrixResponse.destinationAddresses;
+	createCafeList(matrixResponse, destinationsParam, startPositionValue, listByTravelMode){
+
+		const rows = "";
+		const originAddress = "";
+		const destinationAddresses = "";
+		if(matrixResponse){
+			rows = matrixResponse.rows[0];
+			originAddress = matrixResponse.originAddresses[0];
+			destinationAddresses = matrixResponse.destinationAddresses;
+		}
+		
 		const destinations = destinationsParam || [];
-		for(let i = 0, ilen = rows.elements.length; i < ilen; i++){
-			const data = rows.elements[i];
+
+		for(let i = 0, ilen = destinations.length; i < ilen; i++){
+			const data = (rows.elements) ? rows.elements[i] : {status: ""};
 			const destination = destinations[i] || {name: "不明"};
 	
 			const liElm = document.createElement("li");
@@ -230,28 +238,30 @@ class CafeList {
 			// お店の名前
 			positionSpan.textContent = `${destination.name}`;
 			positionSpan.classList.add("positionName");
+			// 緯度
+			latHidden.value = destination.lat;
+			// 経度
+			lngHidden.value = destination.lng;
+			// GoogleMapへの遷移用画像
+			forwardMap.src = "./img/forward.svg";
 
 			if(data.status == 'OK'){
 				// 距離
 				distanceSpan.textContent = `${(Math.round(data.distance.value/100)/10).toFixed(1)} km`;
 				// 所要時間
 				durationSpan.textContent = `${data.duration.text}`;
-				// 緯度
-				latHidden.value = destination.lat;
-				// 経度
-				lngHidden.value = destination.lng;
 				// 住所
 				addressHidden.value = destinationAddresses[i];
-				// GoogleMapへの遷移用画像
-				forwardMap.src = "./img/forward.svg";
+
 				forwardMap.addEventListener("click", () => {
 					openDirectionMap(originAddress, destinationAddresses[i] + ` ${destination.name}`);
 				});
 			}else{
-				distanceSpan.textContent = `経路が見つかりませんでした。`;
+				distanceSpan.textContent = `距離不明`;
 				durationSpan.textContent = ``;
-				latHidden.value = "";
-				lngHidden.value = "";
+				forwardMap.addEventListener("click", () => {
+					openDirectionMap(`${startPositionValue.lat},${startPositionValue.lng}`, `${destination.name}`);
+				});
 			}
 			distanceSpan.classList.add("distance");
 			durationSpan.classList.add("duration");
@@ -374,5 +384,5 @@ class CafeList {
 
 
 const cafeList = new CafeList();
-
+fetchShopData();
 

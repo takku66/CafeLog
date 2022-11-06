@@ -7,7 +7,7 @@ let infoWindow;
 async function initMap() {
 
 	geocoder = new google.maps.Geocoder();
-	const currentPosition = await getCurrentLatLng();
+	const currentPosition = await getCurrentLatLng("35.6809591", "139.7673068");
 	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
 		center: currentPosition
@@ -133,7 +133,7 @@ function fitZoom(){
 
 // 現在位置の取得
 isGettingCurrentLatLng = false;
-function getCurrentLatLng(){
+function getCurrentLatLng(deflat, deflng){
     isGettingCurrentLatLng = true;
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
@@ -156,9 +156,9 @@ function getCurrentLatLng(){
                     default:
                         alert("想定外のエラー(エラーコード:" + error.code + ")");
                         break;
-                    }
-                    isGettingCurrentLatLng = false;
-                    reject(error.code);
+                }
+                isGettingCurrentLatLng = false;
+                reject({error:error.code, lat: deflat, lng: deflng});
             });
     });
 }
