@@ -31,7 +31,6 @@ public class SignUpController {
         Map<String, String> userInfoMap = new HashMap<>();
         userInfoMap = oauthService.getUserInfoMap();
 
-        // メールアドレスは必須
         String name = userInfoMap.get("name");
         mv.addObject("cafeLogUserName", name);
         mv.setViewName("/signup");

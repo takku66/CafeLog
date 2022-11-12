@@ -19,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.cafelog.entity.CafeLogUser;
+import com.cafelog.exception.NotAuthenticatedException;
 import com.cafelog.repository.UserSessionRepository;
 import com.cafelog.service.CafeLogService;
 import com.cafelog.service.OAuthService;
@@ -69,12 +70,17 @@ public class CafeLogAspect {
 
         String uri = ServletUriComponentsBuilder.fromCurrentRequestUri().toUriString();
         if(uri.indexOf("login") == -1 && uri.indexOf("signup") == -1){
-        // 再度認証の必要がある場合は、ログイン画面へ戻す
-        if(oauthService.isNotAuthenticated()){
-            return "redirect:/login";
-        }
 
-            
+            // 再度認証の必要がある場合は、ログイン画面へ戻す
+            if(oauthService.isNotAuthenticated()){
+                return "redirect:/login";
+            }
+
+            try{
+
+            }catch(NotAuthenticatedException e){
+                
+            }
             // 外部認証済みのユーザー情報を取得する
             Map<String, String> userInfoMap = new HashMap<>();
             userInfoMap = oauthService.getUserInfoMap();
