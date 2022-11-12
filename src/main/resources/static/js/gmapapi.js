@@ -1,20 +1,25 @@
 // Initialize and add the map
-let map;
-let geocoder;
-let markers = [];
-let markerIndex = {};
-let infoWindow;
+const GMAP = {
+    map: null,
+    geocoder: null,
+    markers: [],
+    markerIndex: {},
+    infoWindow: null,
+    isGettingCurrentLatLng: false,
+    currentPosition: {lat: "35.6809591", lng: "139.7673068"},
+}
+
 async function initMap() {
 
-	geocoder = new google.maps.Geocoder();
-	const currentPosition = await getCurrentLatLng("35.6809591", "139.7673068");
-	map = new google.maps.Map(document.getElementById('map'), {
+	GMAP.geocoder = new google.maps.Geocoder();
+	GMAP.currentPosition = await getCurrentLatLng("35.6809591", "139.7673068");
+	GMAP.map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
-		center: currentPosition
+		center: GMAP.currentPosition
 	});
 	marking({
-        map: map, 
-        position: currentPosition
+        map: GMAP.map, 
+        position: GMAP.currentPosition
     });
     
 }
@@ -67,7 +72,7 @@ function marking(markerOptions){
     }
 
     const marker = new google.maps.Marker(options);
-    markers.push(marker);
+    GMAP.markers.push(marker);
     
     if(markerOptions.infoWindow){
         marker.addListener("click", () => {
@@ -83,21 +88,21 @@ function marking(markerOptions){
     return marker;
 }
 function addMarkerIndex(marker, key){
-    markerIndex[key] = marker;
+    GMAP.markerIndex[key] = marker;
 }
 function findMarker(key){
-    return markerIndex[key];
+    return GMAP.markerIndex[key];
 }
 
 // TODO: 店名をいれると地図上にマーカーが出て、
 // それを選択してお気に入りのカフェとして登録できるようにする
 function collectLatLng(address){
 	
-	geocoder.geocode( { 'address': address}, function(results, status) {
+	GMAP.geocoder.geocode( { 'address': address}, function(results, status) {
 	if (status == 'OK') {
-		map.setCenter(results[0].geometry.location);
+		GMAP.map.setCenter(results[0].geometry.location);
 		var marker = new google.maps.Marker({
-			map: map,
+			map: GMAP.map,
 			position: results[0].geometry.location
 		});
 		console.log(`name=${address}, lat=${results[0].geometry.location.lat()}, lng=${results[0].geometry.location.lng()}`);
@@ -113,13 +118,13 @@ function moveCenter(latlngMap){
 
 function fitZoom(){
 	// 範囲内に収める
-	var minX = marker[0].getPosition().lng();
-	var minY = marker[0].getPosition().lat();
-	var maxX = marker[0].getPosition().lng();;
-	var maxY = marker[0].getPosition().lat();;
+	var minX = GMAP.marker[0].getPosition().lng();
+	var minY = GMAP.marker[0].getPosition().lat();
+	var maxX = GMAP.marker[0].getPosition().lng();;
+	var maxY = GMAP.marker[0].getPosition().lat();;
 	for(var i=0; i<10; i++){
-	var lt = marker[i].getPosition().lat();
-	var lg = marker[i].getPosition().lng();
+	var lt = GMAP.marker[i].getPosition().lat();
+	var lg = GMAP.marker[i].getPosition().lng();
 	if (lg <= minX){ minX = lg; }
 	if (lg > maxX){ maxX = lg; }
 	if (lt <= minY){ minY = lt; }
@@ -128,19 +133,18 @@ function fitZoom(){
 	var sw = new google.maps.LatLng(maxY, minX);
 	var ne = new google.maps.LatLng(minY, maxX);
 	var bounds = new google.maps.LatLngBounds(sw, ne);
-	map.fitBounds(bounds);
+	GMAP.map.fitBounds(bounds);
 }
 
 
-// 現在位置の取得
-isGettingCurrentLatLng = false;
+
 function getCurrentLatLng(deflat, deflng){
-    isGettingCurrentLatLng = true;
+    GMAP.isGettingCurrentLatLng = true;
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 console.log(position);
-                isGettingCurrentLatLng = false;
+                GMAP.isGettingCurrentLatLng = false;
                 resolve({lat: position.coords.latitude, lng: position.coords.longitude});
             },
             (error) => {
@@ -158,18 +162,19 @@ function getCurrentLatLng(deflat, deflng){
                         alert("想定外のエラー(エラーコード:" + error.code + ")");
                         break;
                 }
-                isGettingCurrentLatLng = false;
-                reject({error:error.code, lat: deflat, lng: deflng});
+                GMAP.isGettingCurrentLatLng = false;
+                // reject({error:error.code, lat: deflat, lng: deflng});
+                resolve({lat: position.coords.latitude, lng: position.coords.longitude});
             });
     });
 }
 function clearAllMarker(){
-    for(let i = 0; i < markers.length; i++){
+    for(let i = 0; i < GMAP.markers.length; i++){
         clearMarker(i);
     }
 }
 function clearMarker(key){
-    markers[key].setMap(null);
+    GMAP.markers[key].setMap(null);
 }
 
 class InfoWindowCreator{
