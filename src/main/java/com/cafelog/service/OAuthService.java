@@ -3,17 +3,31 @@ package com.cafelog.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.cafelog.exception.NotAuthenticatedException;
 
@@ -24,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 public class OAuthService {
     
     private final OAuth2AuthorizedClientService clientService;
+    private final OAuth2AuthorizedClientManager authorizedClientManager;
 
     public boolean isAuthenticated(){
         OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -51,7 +66,24 @@ public class OAuthService {
         return getClient(authentication);
     }
     public OAuth2AuthorizedClient getClient(OAuth2AuthenticationToken authentication){
-        return clientService.loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
+        OAuth2AuthorizedClient client = clientService.loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
+        // リフレッシュトークンで再認証
+        if(client == null){
+            final HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+            final HttpServletResponse res = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+
+            OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId(authentication.getAuthorizedClientRegistrationId())
+            .principal(authentication)
+            .attributes(attrs -> {
+                attrs.put(HttpServletRequest.class.getName(), req);
+                attrs.put(HttpServletResponse.class.getName(), res);
+            })
+            .build();
+            client = this.authorizedClientManager.authorize(authorizeRequest);
+            OAuth2AccessToken token = client.getAccessToken();
+        }
+        
+        return client;
     }
 
     public ResponseEntity<Map> postUserInfoUri(String userInfoEndpointUri, OAuth2AuthorizedClient client){

@@ -15,6 +15,7 @@ import com.cafelog.exception.NotAvailableUserException;
 import com.cafelog.repository.UserSessionRepository;
 import com.cafelog.service.ApiLimitService;
 import com.cafelog.service.CafeLogService;
+import com.cafelog.share.JsonConvertor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -44,28 +45,28 @@ public class HomeController {
     @RequestMapping(path = "/allcafe", method = {RequestMethod.GET, RequestMethod.POST} )
     public String fetchCafeData() throws JsonProcessingException{
 
+        List<Cafe> cafedata = cafeLogService.searchFavoriteCafes(userSession.getUser().getUserId());
+        return JsonConvertor.toJson(cafedata);
+    }
+    @ResponseBody
+    @RequestMapping(path = "/countapi", method = {RequestMethod.GET, RequestMethod.POST} )
+    public String countApi() throws JsonProcessingException{
+
     
         // TODO: APIの回数制限チェックを別で切り出したい
         // TODO:apiIdを定数から取得するようにする
         if(apiLimitService.isOverLimit(1)){
             Map<String, String> map = new HashMap<>();
             map.put("warning", "APIの使用上限を超えました。");
-            return toJson(map);
+            return JsonConvertor.toJson(map);
         }
         apiLimitService.count(1, userSession.getUser().getUserId());
-
-
-        // List<Cafe> list = cafeRepository.findAll();
-        List<Cafe> cafedata = cafeLogService.searchFavoriteCafes(userSession.getUser().getUserId());
-        return toJson(cafedata);
+        Map<String, String> rtn = new HashMap<>();
+        rtn.put("error", "false");
+        rtn.put("message", "success countup.");
+        return JsonConvertor.toJson(rtn);
     }
 
-    private String toJson(Object object) throws JsonProcessingException{
-        if(object == null){
-            return "";
-        }
-        ObjectMapper  objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(object);
-    }
+
 
 }
