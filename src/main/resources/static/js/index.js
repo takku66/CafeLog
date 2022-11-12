@@ -44,7 +44,7 @@ async function search(){
 
 	for(let destination of destinationList){
 		const marker = marking({
-			map: map, 
+			map: GMAP.map, 
 			position: {lat: destination.lat, lng: destination.lng}, 
 			icon: {
 				url: "./img/cafe.png", 
@@ -67,7 +67,7 @@ async function search(){
 		addMarkerIndex(marker, destination.name);
 	}
 	marking({
-        map: map, 
+        map: GMAP.map, 
         position: startPositionValue
     });
 	
