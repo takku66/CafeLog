@@ -1,6 +1,6 @@
-let shopdata;
+let spotdata;
 
-function fetchShopData(){
+function fetchSpotData(){
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content || "";
     const token = document.querySelector('meta[name="_csrf"]')?.content || "";
     const url = (CONTEXT_ROOT == "/" ? "" : CONTEXT_ROOT) + "/allcafe";
@@ -19,10 +19,11 @@ function fetchShopData(){
         return res.text();
     }).then((data) => {
         console.log(data);
-        shopdata = JSON.parse(data);
+        spotdata = JSON.parse(data);
         search();
     }).catch((reason) => {
         console.log(reason);
     });
 }
-fetchShopData();
+
+

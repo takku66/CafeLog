@@ -170,6 +170,11 @@
         .result-list {
             min-width: 400px;
         }
+        ._forwardmap:hover {
+            text-decoration: underline;
+            font-weight: bold;
+            cursor: pointer;
+        }
         .hidden {
             display: none;
         }
@@ -241,7 +246,7 @@
 
         CONTEXT_ROOT = document.getElementById("contextRoot").value;
     </script>
-    <script th:src="@{/js/shopdata.js}"></script>
+    <script th:src="@{/js/spotdata.js}"></script>
     <script th:src="@{/js/index.js}"></script>    
 </body>
 </html>

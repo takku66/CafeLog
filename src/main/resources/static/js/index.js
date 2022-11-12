@@ -1,41 +1,43 @@
 
+/**
+ * 開始地点の住所とspotdata.jsで取得したカフェの情報をもとに、<br>
+ * GoogoleMapAPIから開始地点からの各距離の算出を行う。<br>
+ * 距離の算出ができなくても、カフェリストの表示とマーカーの設定、GoogleMAPへの遷移処理は機能させる
+ */
 async function search(){
-	// 開始地点の住所でGoogoleMapAPIにリクエストし、
-	// 存在しなかった場合は、エラーメッセージ
-	// 複数ヒットした場合は、選択ポップアップ
-	// 1件だけヒットした場合は、MatrixAPIを呼び出す。
 
+	// 検索される度にリストやマーカーが追加されるため、一旦クリア
 	cafeList.clearCafeList();
 	clearAllMarker();
 
-	// デフォルトの出発地点は現在地
+	// デフォルトの出発地点は現在地。取得できなかったら東京駅
 	startPositionValue = await getCurrentLatLng("35.6809591", "139.7673068");
 	
 	// TRANSITオプションが使えないので、方針転換。距離だけの算出のため、徒歩だけでよい
-	let selectedTravelMode = OPTIONS.TRAVEL_MODE.walking; // デフォルトは徒歩
+	let selectedTravelMode = OPTIONS.TRAVEL_MODE.walking;
 
-	const limitValue = document.getElementById("limit-value").value;
-	const limitType = document.getElementById("limit-type");
+	const destinationList = spotdata;
 
-	const destinationList = shopdata;
-
+	// GoogleAPIの１回のリクエスト許容量が25のため
 	const MAX_REQUEST = 25;
-	for(let i = 0, max = shopdata.length; i < max; i+=MAX_REQUEST){
-		const requestData = shopdata.slice(i, i + MAX_REQUEST);
-		const sliceDestination = destinationList.slice(i, i + MAX_REQUEST);
-		callDistanceMatrix(
-			new MatrixOptions().setOrigins([startPositionValue])
-								.setDestinations(requestData)
-								.setTravelMode(selectedTravelMode)
-								// .setTransitOptions(transitOptions)
-								.setCallBack((response, status) => {
-									console.log(response);
-									cafeList.drawDistanceList(response, sliceDestination, startPositionValue, selectedTravelMode);
-									if (status !== "OK") {
-										throw new Error("Distance Matrix処理中にエラーが発生しました。");
-									}
 
-								})
+	// 開始地点とカフェまでの距離算出と一覧の描画を行う
+	for(let i = 0, max = spotdata.length; i < max; i+=MAX_REQUEST){
+		const requestData = spotdata.slice(i, i + MAX_REQUEST);
+		const sliceDestination = destinationList.slice(i, i + MAX_REQUEST);
+		callDistanceMatrix(new MatrixOptions()
+			.setOrigins([startPositionValue])
+			.setDestinations(requestData)
+			.setTravelMode(selectedTravelMode)
+			// .setTransitOptions(transitOptions)
+			.setCallBack((response, status) => {
+				console.log(response);
+				cafeList.drawDistanceList(response, sliceDestination, startPositionValue, selectedTravelMode);
+				if (status !== "OK") {
+					throw new Error("Distance Matrix処理中にエラーが発生しました。");
+				}
+
+			})
 		);
 
 	}
@@ -48,7 +50,19 @@ async function search(){
 				url: "./img/cafe.png", 
 				scaledSize: new google.maps.Size(50, 50)
 			},
-			infoWindow: new InfoWindowCreator(destination.name, destination.name).create()
+			infoWindow: new InfoWindowCreator(destination.name, "content", 
+												{startPosition: startPositionValue,
+												category: "喫茶店", 
+												lat: destination.lat, 
+												lng: destination.lng, 
+												travelMode: selectedTravelMode})
+												.create(),
+			infoWindowCallback: () => {
+				const markerTitle = document.getElementsByClassName(`_forwardmap ${destination.lat} ${destination.lng}`)[0];
+				markerTitle.addEventListener("click", () => {
+					openDirectionMap(`${startPositionValue.lat},${startPositionValue.lng}`, `${destination.lat},${destination.lng},${destination.name}`);
+				});
+			}
 		});
 		addMarkerIndex(marker, destination.name);
 	}
@@ -56,6 +70,7 @@ async function search(){
         map: map, 
         position: startPositionValue
     });
+	
 }
 	
 function toggleStartPosition(){
@@ -172,6 +187,7 @@ class CafeList {
 			this.#expandButton.addEventListener("click", () => {
 				this.toggleExpandList();
 			});
+			this.forwardImg = "./img/forward.svg";
 		});
 	}
 
@@ -243,7 +259,8 @@ class CafeList {
 			// 経度
 			lngHidden.value = destination.lng;
 			// GoogleMapへの遷移用画像
-			forwardMap.src = "./img/forward.svg";
+			forwardMap.src = this.forwardImg;
+
 
 			if(data.status == 'OK'){
 				// 距離
@@ -252,7 +269,6 @@ class CafeList {
 				durationSpan.textContent = `${data.duration.text}`;
 				// 住所
 				addressHidden.value = destinationAddresses[i];
-
 				forwardMap.addEventListener("click", () => {
 					openDirectionMap(originAddress, destinationAddresses[i] + ` ${destination.name}`);
 				});
@@ -260,7 +276,8 @@ class CafeList {
 				distanceSpan.textContent = `距離不明`;
 				durationSpan.textContent = ``;
 				forwardMap.addEventListener("click", () => {
-					openDirectionMap(`${startPositionValue.lat},${startPositionValue.lng}`, `${destination.name}`);
+					// MatrixAPIが通っていれば住所まで引っ張れるが、それがなければ若干曖昧な検索になっちゃう
+					openDirectionMap(`${startPositionValue.lat}, ${startPositionValue.lng}`, `喫茶店 ${destination.name}`);
 				});
 			}
 			distanceSpan.classList.add("distance");
@@ -384,5 +401,5 @@ class CafeList {
 
 
 const cafeList = new CafeList();
-fetchShopData();
+fetchSpotData();
 
