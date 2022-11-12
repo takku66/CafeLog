@@ -6,13 +6,13 @@ const GMAP = {
     markerIndex: {},
     infoWindow: null,
     isGettingCurrentLatLng: false,
-    currentPosition: {lat: "35.6809591", lng: "139.7673068"},
+    currentPosition: {lat: 35.6809591, lng: 139.7673068},
 }
 
 async function initMap() {
 
 	GMAP.geocoder = new google.maps.Geocoder();
-	GMAP.currentPosition = await getCurrentLatLng("35.6809591", "139.7673068");
+	GMAP.currentPosition = await getCurrentLatLng(35.6809591, 139.7673068);
 	GMAP.map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
 		center: GMAP.currentPosition
@@ -78,7 +78,7 @@ function marking(markerOptions){
         marker.addListener("click", () => {
             markerOptions.infoWindow.open({
                 anchor: marker,
-                map,
+                map: GMAP.map,
                 shouldFocus: false,
             })
         });
@@ -101,7 +101,7 @@ function collectLatLng(address){
 	GMAP.geocoder.geocode( { 'address': address}, function(results, status) {
 	if (status == 'OK') {
 		GMAP.map.setCenter(results[0].geometry.location);
-		var marker = new google.maps.Marker({
+		let marker = new google.maps.Marker({
 			map: GMAP.map,
 			position: results[0].geometry.location
 		});
@@ -113,26 +113,26 @@ function collectLatLng(address){
 }
 
 function moveCenter(latlngMap){
-    map.setCenter(new google.maps.LatLng(latlngMap.lat, latlngMap.lng));
+    GMAP.map.setCenter(new google.maps.LatLng(latlngMap.lat, latlngMap.lng));
 }
 
 function fitZoom(){
 	// 範囲内に収める
-	var minX = GMAP.marker[0].getPosition().lng();
-	var minY = GMAP.marker[0].getPosition().lat();
-	var maxX = GMAP.marker[0].getPosition().lng();;
-	var maxY = GMAP.marker[0].getPosition().lat();;
-	for(var i=0; i<10; i++){
-	var lt = GMAP.marker[i].getPosition().lat();
-	var lg = GMAP.marker[i].getPosition().lng();
-	if (lg <= minX){ minX = lg; }
-	if (lg > maxX){ maxX = lg; }
-	if (lt <= minY){ minY = lt; }
-	if (lt > maxY){ maxY = lt; }
+	const minX = GMAP.marker[0].getPosition().lng();
+	const minY = GMAP.marker[0].getPosition().lat();
+	const maxX = GMAP.marker[0].getPosition().lng();;
+	const maxY = GMAP.marker[0].getPosition().lat();;
+	for(let i=0; i<10; i++){
+        let lt = GMAP.marker[i].getPosition().lat();
+        let lg = GMAP.marker[i].getPosition().lng();
+        if (lg <= minX){ minX = lg; }
+        if (lg > maxX){ maxX = lg; }
+        if (lt <= minY){ minY = lt; }
+        if (lt > maxY){ maxY = lt; }
 	}
-	var sw = new google.maps.LatLng(maxY, minX);
-	var ne = new google.maps.LatLng(minY, maxX);
-	var bounds = new google.maps.LatLngBounds(sw, ne);
+	const sw = new google.maps.LatLng(maxY, minX);
+	const ne = new google.maps.LatLng(minY, maxX);
+	const bounds = new google.maps.LatLngBounds(sw, ne);
 	GMAP.map.fitBounds(bounds);
 }
 
