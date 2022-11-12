@@ -11,7 +11,7 @@ async function search(){
 	clearAllMarker();
 
 	// デフォルトの出発地点は現在地。取得できなかったら東京駅
-	startPositionValue = await getCurrentLatLng("35.6809591", "139.7673068");
+	startPositionValue = GMAP.currentPosition;
 	
 	// TRANSITオプションが使えないので、方針転換。距離だけの算出のため、徒歩だけでよい
 	let selectedTravelMode = OPTIONS.TRAVEL_MODE.walking;
