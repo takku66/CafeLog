@@ -164,7 +164,7 @@ function getCurrentLatLng(deflat, deflng){
                 }
                 GMAP.isGettingCurrentLatLng = false;
                 // reject({error:error.code, lat: deflat, lng: deflng});
-                resolve({lat: position.coords.latitude, lng: position.coords.longitude});
+                resolve({lat: deflat, lng: deflng});
             });
     });
 }
