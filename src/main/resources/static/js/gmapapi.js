@@ -75,8 +75,9 @@ function marking(markerOptions){
                 anchor: marker,
                 map,
                 shouldFocus: false,
-            });
+            })
         });
+
     }
     
     return marker;
@@ -173,19 +174,33 @@ function clearMarker(key){
 
 class InfoWindowCreator{
 
-    constructor(title, htmlContent){
+    constructor(title, htmlContent, googleMapParams){
         this.title = title;
         this.content = htmlContent;
+        this.startPosition = googleMapParams.startPosition;
+        this.category = googleMapParams.category;
+        this.lat = googleMapParams.lat;
+        this.lng = googleMapParams.lng;
+        this.travelMode = googleMapParams.travelMode;
+        
     }
 
     create(){
-        const html = `<h3 class="infoWindow ">${this.title}</h3><div class="infoWindow content">${this.content}</div>`;
+        const url = linkUrlDirectionMap(`${this.startPosition.lat}, ${this.startPosition.lng}`, `${this.category} ${this.title}`);
+        const html = `
+            <h3 class="infoWindow title _forwardmap ${this.lat} ${this.lng}">${this.title}</h3>
+            <div class="infoWindow content">${this.content}</div>
+            <a href="${url}" target="_blank">経路を開く</a>
+        `;
         return new google.maps.InfoWindow({
             content: html,
         });
     }
 }
 
-function openDirectionMap(origin, destination, travelmode){
+function openDirectionMap(origin, destination){
     window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=transit`);
+}
+function linkUrlDirectionMap(origin, destination){
+    return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=transit`;
 }
