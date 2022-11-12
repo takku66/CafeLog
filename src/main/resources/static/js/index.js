@@ -224,9 +224,9 @@ class CafeList {
 
 	createCafeList(matrixResponse, destinationsParam, startPositionValue, listByTravelMode){
 
-		const rows = "";
-		const originAddress = "";
-		const destinationAddresses = "";
+		let rows = "";
+		let originAddress = "";
+		let destinationAddresses = "";
 		if(matrixResponse){
 			rows = matrixResponse.rows[0];
 			originAddress = matrixResponse.originAddresses[0];
