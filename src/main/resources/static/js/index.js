@@ -208,7 +208,7 @@ class CafeList {
 		let travelModeUl = document.getElementsByClassName(`resultlist-${travelMode}`)[0];
 		if(typeof(travelModeUl) === 'undefined' || travelModeUl === null || travelModeUl.length === 0){
 			travelModeUl = document.createElement("ul");
-			travelModeUl.classList.add("travelModeUl");
+			travelModeUl.classList.add("resultlist-by-travelmode");
 			travelModeUl.classList.add(`resultlist-${travelMode}`);
 	
 			const travelModeLabel = document.createElement("span");
@@ -312,14 +312,14 @@ class CafeList {
 		});
 	}
 	clearCafeList(){
-		const list = this.#resultListArea.getElementsByClassName("travelModeUl");
+		const list = this.#resultListArea.getElementsByClassName("resultlist-by-travelmode");
 		for(let listByTravelMode of list){
 			this.#resultListArea.removeChild(listByTravelMode);
 		}
 	}
 	sort(){
 		const isAsc = this.#distanceSort.value == "asc";
-		const list = this.#resultListArea.getElementsByClassName("travelModeUl");
+		const list = this.#resultListArea.getElementsByClassName("resultlist-by-travelmode");
 		for(let listByTravelMode of list){
 
 			const targetList = Array.prototype.slice.call(listByTravelMode.getElementsByTagName("li"));
@@ -360,7 +360,7 @@ class CafeList {
 	}
 	filter(){
 		const filterValue = this.#distanceFilter.value;
-		const list = this.#resultListArea.getElementsByClassName("travelModeUl");
+		const list = this.#resultListArea.getElementsByClassName("resultlist-by-travelmode");
 		for(let listByTravelMode of list){
 			const targetList = listByTravelMode.getElementsByTagName("li");
 			const kmFilterValue = parseFloat(filterValue/1000);
@@ -385,15 +385,15 @@ class CafeList {
 		this.filter();
 	}
 	toggleExpandList(){
-		const resultList = this.#resultListArea.getElementsByClassName("travelModeUl")[0];
-		if( !resultList){
-			return;
-		}
+		// const resultList = this.#resultListArea.getElementsByClassName("result-list")[0];
+		// if( !resultList){
+		// 	return;
+		// }
 		if(this.#expandButton.classList.contains("isExpand")){
-			resultList.classList.remove("expand");
+			this.#resultListArea.classList.remove("expand");
 			this.#expandButton.classList.remove("isExpand");
 		}else{
-			resultList.classList.add("expand");
+			this.#resultListArea.classList.add("expand");
 			this.#expandButton.classList.add("isExpand");
 		}
 	}

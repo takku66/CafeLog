@@ -100,14 +100,14 @@ function collectLatLng(address){
 	
 	GMAP.geocoder.geocode( { 'address': address}, function(results, status) {
 	if (status == 'OK') {
-		GMAP.map.setCenter(results[0].geometry.location);
-		let marker = new google.maps.Marker({
-			map: GMAP.map,
-			position: results[0].geometry.location
-		});
-		console.log(`name=${address}, lat=${results[0].geometry.location.lat()}, lng=${results[0].geometry.location.lng()}`);
+		// GMAP.map.setCenter(results[0].geometry.location);
+		// let marker = new google.maps.Marker({
+		// 	map: GMAP.map,
+		// 	position: results[0].geometry.location
+		// });
+		console.log(`name=${address}, status=${status}, lat=${results[0].geometry.location.lat()}, lng=${results[0].geometry.location.lng()}`);
 	} else {
-		console.log('Geocode was not successful for the following reason: ' + status);
+		console.log(`name=${address}, status=${status}`);
 	}
 	});
 }
