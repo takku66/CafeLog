@@ -18,33 +18,63 @@
             --shadow-color: lightgray;
             --positive-color: bisque;
         }
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        main {
+            height: 100%;
+        }
+        nav { 
+            height: 5vh;
+        }
         @media screen and (max-width:600px){
             body {
-                display: flex;
+                display: grid;
                 gap: 0.7em;
-                flex-direction: column;
+                grid-template-areas: 
+                    "main"
+                    "nav";
+                height: 100%;
             }
-            .travelModeUl {
-                height: 80px;
+            main {
+                grid-area: main;
+                display: grid;
+                grid-template-areas: 
+                    "map"
+                    "search"
+                    "result"
+                    "result-bottom-btn";
+            }
+            nav {
+                position: fixed;
+                bottom: 0;
+            }
+            .result-list {
+                height: 20vh;
                 transition-property: all;
                 transition-duration: 0.2s;
             }
-            .travelModeUl.expand {
+            .result-list.expand {
                 height: 400px;
             }
+           
             .map {
-                height: calc(100vh - 250px);
+                height: 60vh;
             }
             .result-list-bottom-area {
                 position: relative;
                 width: 100vw;
+                margin-bottom: 80px;
             }
             .expand-button {
                 position: absolute;
                 display: block;
                 padding: 2px 8px;
                 text-align: center;
-                top: -20px;
+                top: -10px;
                 cursor: pointer;
                 border-radius: 16px;
                 box-shadow: 0 0 3px 2px var(--shadow-color);
@@ -58,33 +88,45 @@
         }
         @media screen and (min-width:601px){
             body {
-                display: flex;
+                display: grid;
                 gap: 0.7em;
-                flex-direction: row;
+                grid-template-areas: 
+                    "nav"
+                    "main";
             }
-            .travelModeUl {
-                height: 90vh;
+            main {
+                grid-area: main;
+                display: grid;
+                grid-template-areas:
+                    "search map"
+                    "result map"
+                    "result-bottom-btn map";
+                grid-template-columns: minmax(200px, 40%) auto;
+            }
+            .result-list {
+                height: 80vh;
             }
             .map {
-                height: 100vh;
+                height: 90vh;
             }
             .expand-button {
                 display: none;
             }
         }
         .map {
+            grid-area: map;
             min-width: 300px;
-            width: 100vw;
+            width: 100%;
             max-width: 100%;
             min-height: 300px;
             max-height: 100%;
         }
         .search-box {
+            grid-area: search;
             display: flex;
             gap: 0.7em;
             flex-direction: column;
-            width: 30%;
-            max-width: 300px;
+            width: 100%;
         }
         .search-button {
             border: 0;
@@ -93,9 +135,6 @@
             background-color: bisque;
             width: 50px;
             cursor: pointer;
-        }
-        .limit-value {
-
         }
         .radio-travel-mode + label  {
             background-color: lightgray;
@@ -131,12 +170,16 @@
             display: none;
             padding: var(--minimum-gap);
         }
-        .travelModeUl {
+        .resultlist-by-travelmode {
             list-style: none;
             padding: 0;
+            height: 90%;
             overflow: auto;
         }
-
+        .result-list {
+            grid-area: result;
+            width: 100%;
+        }
         .result-list li {
             list-style: none;
             border-bottom: 1px solid var(--shadow-color);
@@ -159,6 +202,9 @@
             min-width: 100px;
             width: 10%;
         }
+        .result-list-bottom-area {
+            grid-area: result-bottom-btn;
+        }
         .distance-sort-box .sort-line-1,
         .distance-sort-box .sort-line-2,
         .distance-sort-box .sort-line-3 {
@@ -167,9 +213,38 @@
             border: 0;
             background-color: rgb(30,30,30);
         }
-        .result-list {
-            min-width: 400px;
+        .navigation-menu {
+            margin: 0;
+            width: 100vw;
+            grid-area: nav;
+            background-color: antiquewhite;
+            display: flex;
+            justify-content: space-around;
         }
+        .menu-item {
+            display: grid;
+            grid-template-areas: 
+                "image"
+                "label";
+            font-size: 0.5em;
+            text-align: center;
+            width: 50px;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            opacity: 2;
+        }
+        .item-image {
+            grid-area: image;
+            width: 1.5rem;
+            height: 1.5rem;
+            margin: 0 auto;
+        }
+        .item-label {
+            grid-area: label;
+            text-align: center;
+        }
+        
         ._forwardmap:hover {
             text-decoration: underline;
             font-weight: bold;
@@ -181,62 +256,81 @@
     </style>
 </head>
 <body>
-    <div id="search-box" class="search-box">
-        <label class="start-position-area hidden">
-            <input type="text" id="txt-start-position" class="txt-start-position" placeholder="出発地点の住所" />
-            <!-- <button type="button" id="address-search-button" class="address-search-button" >Map上で検索</button> -->
-            <!-- このボタンを押すと地図上で検索され、その検索でヒットしたところを出発地点にする的な -->
-            <input type="checkbox" id="chk-current-position" class="chk-current-position" onchange="toggleStartPosition()">現在地</button>
-        </label>
-        <label class="limit hidden">
-            <input type="number" id="limit-value" class="limit-value" />
-            <select id="limit-type">
-                <option value="distance">m</option>
-                <option value="time">分</option>
-            </select>
-            以内
-        </label>
-        <!-- <label>
-            <input type="radio" id="rd-driving" class="radio-travel-mode" name="travel-mode" value="driving"><label for="rd-driving">車</label>
-            <input type="radio" id="rd-transit" class="radio-travel-mode" name="travel-mode" value="transit"><label for="rd-transit">交通機関</label>
-            <input type="radio" id="rd-bicycling" class="radio-travel-mode" name="travel-mode" value="bicycling"><label for="rd-bicycling">自転車</label>
-            <input type="radio" id="rd-walking" class="radio-travel-mode" name="travel-mode" value="walking"><label for="rd-walking">徒歩</label>
-        </label> -->
-        <!-- <button type="button" id="search-button" class="search-button" onclick="search()">検索</button> -->
-    </div>
-    <ul id="result-list" class="result-list">
-        <li>
-            <img th:src="@{/img/filter_icon.svg}" class="filter-icon" />
-            <span class="distance-filter-box">
-                <select id="distance-filter-select">
-                    <option value="-1">距離指定なし</option>
-                    <option value="500">500 m以内</option>
-                    <option value="800">800 m以内</option>
-                    <option value="1000">1 km以内</option>
-                    <option value="3000">3 km以内</option>
-                    <option value="5000">5 km以内</option>
-                    <option value="10000">10 km以内</option>
-                    <option value="20000">20 km以内</option>
-                    <option value="30000">30 km以内</option>
-                    <option value="50000">50 km以内</option>
+    <nav id="navigation-menu" class="navigation-menu">
+        <span class="menu-item">
+            <img th:src="@{/img/map_icon.svg}" class="item-image" />
+            <label class="item-label">MAP</label>
+        </span>
+        <span class="menu-item">
+            <img th:src="@{/img/favorite_icon.svg}" class="item-image" />
+            <label class="item-label">お気に入り</label>
+        </span>
+        <span class="menu-item">
+            <img th:src="@{/img/add_icon.svg}" class="item-image" />
+            <label class="item-label">登録</label>
+        </span>
+        <span class="menu-item">
+            <img th:src="@{/img/diary_icon.svg}" class="item-image" />
+            <label class="item-label">日記</label>
+        </span>
+    </nav>
+    <main>
+        <div id="search-box" class="search-box">
+            <label class="start-position-area hidden">
+                <input type="text" id="txt-start-position" class="txt-start-position" placeholder="出発地点の住所" />
+                <!-- <button type="button" id="address-search-button" class="address-search-button" >Map上で検索</button> -->
+                <!-- このボタンを押すと地図上で検索され、その検索でヒットしたところを出発地点にする的な -->
+                <input type="checkbox" id="chk-current-position" class="chk-current-position" onchange="toggleStartPosition()">現在地</button>
+            </label>
+            <label class="limit hidden">
+                <input type="number" id="limit-value" class="limit-value" />
+                <select id="limit-type">
+                    <option value="distance">m</option>
+                    <option value="time">分</option>
                 </select>
-            </span>
-            <span class="distance-sort-box">
-                <select id="distance-sort-select">
-                    <option value="asc">距離が近い順</option>
-                    <option value="desc">距離が遠い順</option>
-                </select>
-            </span>
-        </li>
-    </ul>
-    <div id="result-list-bottom-area" class="result-list-bottom-area">
-        <span id="expand-button" class="expand-button">∨</span>
-    </div>
-    <div id="map" class="map"></div>
+                以内
+            </label>
+            <!-- <label>
+                <input type="radio" id="rd-driving" class="radio-travel-mode" name="travel-mode" value="driving"><label for="rd-driving">車</label>
+                <input type="radio" id="rd-transit" class="radio-travel-mode" name="travel-mode" value="transit"><label for="rd-transit">交通機関</label>
+                <input type="radio" id="rd-bicycling" class="radio-travel-mode" name="travel-mode" value="bicycling"><label for="rd-bicycling">自転車</label>
+                <input type="radio" id="rd-walking" class="radio-travel-mode" name="travel-mode" value="walking"><label for="rd-walking">徒歩</label>
+            </label> -->
+            <!-- <button type="button" id="search-button" class="search-button" onclick="search()">検索</button> -->
+        </div>
+        <ul id="result-list" class="result-list">
+            <li>
+                <img th:src="@{/img/filter_icon.svg}" class="filter-icon" />
+                <span class="distance-filter-box">
+                    <select id="distance-filter-select">
+                        <option value="-1">距離指定なし</option>
+                        <option value="500">500 m以内</option>
+                        <option value="800">800 m以内</option>
+                        <option value="1000">1 km以内</option>
+                        <option value="3000">3 km以内</option>
+                        <option value="5000">5 km以内</option>
+                        <option value="10000">10 km以内</option>
+                        <option value="20000">20 km以内</option>
+                        <option value="30000">30 km以内</option>
+                        <option value="50000">50 km以内</option>
+                    </select>
+                </span>
+                <span class="distance-sort-box">
+                    <select id="distance-sort-select">
+                        <option value="asc">距離が近い順</option>
+                        <option value="desc">距離が遠い順</option>
+                    </select>
+                </span>
+            </li>
+        </ul>
+        <div id="result-list-bottom-area" class="result-list-bottom-area">
+            <span id="expand-button" class="expand-button">∨</span>
+        </div>
+        <div id="map" class="map"></div>
 
-    <input type="hidden" id="googleMapApiKey" th:value="${googleMapApiKey}" />
-    <input type="hidden" id="contextRoot" th:value="${#httpServletRequest.contextPath}" />
-
+        <input type="hidden" id="googleMapApiKey" th:value="${googleMapApiKey}" />
+        <input type="hidden" id="contextRoot" th:value="${#httpServletRequest.contextPath}" />
+    </main>
     <script th:src="@{/js/gmapapi.js}"></script>
     <script>
         const gmapsc = document.createElement("script");
