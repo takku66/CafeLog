@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" >
+    <title>Cafe Log</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+	<meta name="_csrf_parameter" content="_csrf" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<meta name="_csrf" th:content="${_csrf.token}" />
+    <style>
+        .map {
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+<body>
+    <input type="hidden" id="googleMapApiKey" th:value="${googleMapApiKey}" />
+    <input type="hidden" id="contextRoot" th:value="${#httpServletRequest.contextPath}" />
+
+<form>
+    <nav></nav>
+</form>
+
+<form>
+    <main>
+        <div class="add_spot_form">
+            <label>名前：</label><input type="text" name="spotName" />
+            <button id="btn-search_spot">検索</button>
+            <label>経度：</label><input type="text" name="longitude" />
+            <label>緯度：</label><input type="text" name="latitude" />
+            <button id="btn-add_spot">追加</button>
+        </div>
+
+        <ul class="spot_list">
+
+        </ul>
+
+        <div id="map" class="map"></div>
+    </main>
+</form>
+
+    <script th:src="@{/js/gmapapi.js}"></script>
+
+    <script>
+        const gmapsc = document.createElement("script");
+        const apikey = document.getElementById("googleMapApiKey");
+        gmapsc.src = `https://maps.googleapis.com/maps/api/js?key=${apikey.value}&callback=initMap`;
+        document.body.appendChild(gmapsc);
+    </script>
+    <script th:src="@{/js/add_spot.js}"></script>
+</body>
+</html>
+
+

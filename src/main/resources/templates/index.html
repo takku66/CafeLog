@@ -256,24 +256,32 @@
     </style>
 </head>
 <body>
+
+    <input type="hidden" id="googleMapApiKey" th:value="${googleMapApiKey}" />
+    <input type="hidden" id="contextRoot" th:value="${#httpServletRequest.contextPath}" />
+
+<form name="navigation" th:action="@{/}" method="post">
     <nav id="navigation-menu" class="navigation-menu">
-        <span class="menu-item">
+        <span id="nav-map" class="menu-item nav-map">
             <img th:src="@{/img/map_icon.svg}" class="item-image" />
             <label class="item-label">MAP</label>
         </span>
-        <span class="menu-item">
+        <span id="nav-favorite" class="menu-item nav-favorite">
             <img th:src="@{/img/favorite_icon.svg}" class="item-image" />
             <label class="item-label">お気に入り</label>
         </span>
-        <span class="menu-item">
+        <span id="nav-add_spot" class="menu-item nav-add_spot">
             <img th:src="@{/img/add_icon.svg}" class="item-image" />
             <label class="item-label">登録</label>
         </span>
-        <span class="menu-item">
+        <span id="nav-diary" class="menu-item nav-diary">
             <img th:src="@{/img/diary_icon.svg}" class="item-image" />
             <label class="item-label">日記</label>
         </span>
     </nav>
+</form>
+
+<form>
     <main>
         <div id="search-box" class="search-box">
             <label class="start-position-area hidden">
@@ -327,10 +335,9 @@
             <span id="expand-button" class="expand-button">∨</span>
         </div>
         <div id="map" class="map"></div>
-
-        <input type="hidden" id="googleMapApiKey" th:value="${googleMapApiKey}" />
-        <input type="hidden" id="contextRoot" th:value="${#httpServletRequest.contextPath}" />
     </main>
+</form>
+    <script th:src="@{/js/navigation.js}"></script>
     <script th:src="@{/js/gmapapi.js}"></script>
     <script>
         const gmapsc = document.createElement("script");
