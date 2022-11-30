@@ -11,7 +11,7 @@ async function search(){
 	clearAllMarker();
 
 	// デフォルトの出発地点は現在地。取得できなかったら東京駅
-	startPositionValue = GMAP.currentPosition;
+	startPositionValue = await GMAP.currentPosition();
 	
 	// TRANSITオプションが使えないので、方針転換。距離だけの算出のため、徒歩だけでよい
 	let selectedTravelMode = OPTIONS.TRAVEL_MODE.walking;
@@ -324,8 +324,8 @@ class CafeList {
 
 			const targetList = Array.prototype.slice.call(listByTravelMode.getElementsByTagName("li"));
 			const sortedList = targetList.sort((a, b) => {
-				const adis = parseFloat(a.getElementsByClassName("distance")[0].textContent.replace(" km", ""));
-				const bdis = parseFloat(b.getElementsByClassName("distance")[0].textContent.replace(" km", ""));
+				const adis = parseFloat(a.getElementsByClassName("distance")[0].textContent.replace(" km", "")) || 9999999;
+				const bdis = parseFloat(b.getElementsByClassName("distance")[0].textContent.replace(" km", "")) || 9999999;
 				if(isAsc){
 					return this.sortAsc(adis, bdis);
 				}else{

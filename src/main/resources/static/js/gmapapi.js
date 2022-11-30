@@ -6,13 +6,15 @@ const GMAP = {
     markerIndex: {},
     infoWindow: null,
     isGettingCurrentLatLng: false,
-    currentPosition: {lat: 35.6809591, lng: 139.7673068},
+    currentPosition: async function(){
+        const latlng = await getCurrentLatLng(35.6809591, 139.7673068);
+        return latlng;
+    }
 }
 
 async function initMap() {
 
 	GMAP.geocoder = new google.maps.Geocoder();
-	GMAP.currentPosition = await getCurrentLatLng(35.6809591, 139.7673068);
 	GMAP.map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
 		center: GMAP.currentPosition

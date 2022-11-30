@@ -53,3 +53,8 @@ gcp-cafelog.pub
 passphrase.txt
 
 ssl_certs
+
+**/Lib/**
+**/Include/**
+**/Scripts/**
+pyvenv.cfg
