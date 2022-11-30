@@ -67,6 +67,14 @@ public class HomeController {
         return JsonConvertor.toJson(rtn);
     }
 
+    @RequestMapping(path = "/add_spot", method = {RequestMethod.POST} )
+    public ModelAndView forwardAddSpot() {
+
+        ModelAndView mv = new ModelAndView();
+
+        mv.setViewName("forward:/add_spot/init");
+        return mv;
+    }
 
 
 }
