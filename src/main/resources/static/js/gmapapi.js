@@ -17,11 +17,11 @@ async function initMap() {
 	GMAP.geocoder = new google.maps.Geocoder();
 	GMAP.map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 15,
-		center: GMAP.currentPosition
+		center: await GMAP.currentPosition()
 	});
 	marking({
         map: GMAP.map, 
-        position: GMAP.currentPosition
+        position: await GMAP.currentPosition()
     });
     
 }
