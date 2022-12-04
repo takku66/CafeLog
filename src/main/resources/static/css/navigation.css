@@ -1,0 +1,43 @@
+.navigation-form {
+    grid-area: nav;
+}
+.navigation-menu {
+    margin: 0;
+    width: 100vw;
+    padding: var(--inset-gap);
+    background-color: antiquewhite;
+    display: flex;
+    justify-content: space-around;
+}
+.menu-item {
+    display: grid;
+    grid-template-areas: 
+        "image"
+        "label";
+    font-size: 0.5em;
+    text-align: center;
+    width: 50px;
+    cursor: pointer;
+}
+.menu-item:hover {
+    opacity: 2;
+}
+.item-image {
+    grid-area: image;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin: 0 auto;
+}
+.item-label {
+    grid-area: label;
+    text-align: center;
+}
+
+._forwardmap:hover {
+    text-decoration: underline;
+    font-weight: bold;
+    cursor: pointer;
+}
+.hidden {
+    display: none;
+}

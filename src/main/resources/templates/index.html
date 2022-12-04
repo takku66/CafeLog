@@ -8,259 +8,17 @@
 	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
 	<meta name="_csrf" th:content="${_csrf.token}" />
 
-    <style>
-        :root {
-            --outset-gap: 0.7em;
-            --inset-gap: 0.5em;
-            --minimum-gap: 0.3em;
-            --active-color-b: lightblue;
-            --non-active: lightgray;
-            --shadow-color: lightgray;
-            --positive-color: bisque;
-        }
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        main {
-            height: 100%;
-        }
-        nav { 
-            height: 5vh;
-        }
-        @media screen and (max-width:600px){
-            body {
-                display: grid;
-                gap: 0.7em;
-                grid-template-areas: 
-                    "main"
-                    "nav";
-                height: 100%;
-            }
-            main {
-                grid-area: main;
-                display: grid;
-                grid-template-areas: 
-                    "map"
-                    "search"
-                    "result"
-                    "result-bottom-btn";
-            }
-            nav {
-                position: fixed;
-                bottom: 0;
-            }
-            .result-list {
-                height: 20vh;
-                transition-property: all;
-                transition-duration: 0.2s;
-            }
-            .result-list.expand {
-                height: 400px;
-            }
-           
-            .map {
-                height: 60vh;
-            }
-            .result-list-bottom-area {
-                position: relative;
-                width: 100vw;
-                margin-bottom: 80px;
-            }
-            .expand-button {
-                position: absolute;
-                display: block;
-                padding: 2px 8px;
-                text-align: center;
-                top: -10px;
-                cursor: pointer;
-                border-radius: 16px;
-                box-shadow: 0 0 3px 2px var(--shadow-color);
-                left: calc(50% - 10px);
-                transition-property: all;
-                transition-duration: 0.2s;
-            }
-            .expand-button.isExpand {
-                transform: rotate(180deg);
-            }
-        }
-        @media screen and (min-width:601px){
-            body {
-                display: grid;
-                gap: 0.7em;
-                grid-template-areas: 
-                    "nav"
-                    "main";
-            }
-            main {
-                grid-area: main;
-                display: grid;
-                grid-template-areas:
-                    "search map"
-                    "result map"
-                    "result-bottom-btn map";
-                grid-template-columns: minmax(200px, 40%) auto;
-            }
-            .result-list {
-                height: 80vh;
-            }
-            .map {
-                height: 90vh;
-            }
-            .expand-button {
-                display: none;
-            }
-        }
-        .map {
-            grid-area: map;
-            min-width: 300px;
-            width: 100%;
-            max-width: 100%;
-            min-height: 300px;
-            max-height: 100%;
-        }
-        .search-box {
-            grid-area: search;
-            display: flex;
-            gap: 0.7em;
-            flex-direction: column;
-            width: 100%;
-        }
-        .search-button {
-            border: 0;
-            border-radius: 4px;
-            box-shadow: 0 0 4px 2px lightgray;
-            background-color: bisque;
-            width: 50px;
-            cursor: pointer;
-        }
-        .radio-travel-mode + label  {
-            background-color: lightgray;
-            border-radius: 4px;
-            box-shadow: 0 0 4px 2px lightgray;
-            padding: 0.2em 0.5em;
-            cursor: pointer;
-        }
-        .radio-travel-mode:checked + label {
-            background-color: lightblue;
-        }
-        .radio-travel-mode {
-            display: none;
-        }
-        .filter-icon {
-            width: 1em;
-            height: 1.5em;
-            vertical-align: middle;
-        }
-        .positionName,
-        .distance,
-        .duration {
-            padding: var(--inset-gap);
-        }
-        .forwardMap {
-            width: 1.2em;
-            height: 1.2em;
-            cursor: pointer;
-            vertical-align: middle;
-        }
-        .travelMode.label {
-            background-color: bisque;
-            display: none;
-            padding: var(--minimum-gap);
-        }
-        .resultlist-by-travelmode {
-            list-style: none;
-            padding: 0;
-            height: 90%;
-            overflow: auto;
-        }
-        .result-list {
-            grid-area: result;
-            width: 100%;
-        }
-        .result-list li {
-            list-style: none;
-            border-bottom: 1px solid var(--shadow-color);
-        }
-        .result-list li span {
-            display: inline-block;
-        }
-        .result-list .positionName {
-            min-width: 200px;
-            width: 20%;
-            text-align: left;
-        }
-        .result-list .distance {
-            min-width: 100px;
-            width: 10%;
-            text-align: right;
-        }
-        .result-list .duration {
-            display: none;
-            min-width: 100px;
-            width: 10%;
-        }
-        .result-list-bottom-area {
-            grid-area: result-bottom-btn;
-        }
-        .distance-sort-box .sort-line-1,
-        .distance-sort-box .sort-line-2,
-        .distance-sort-box .sort-line-3 {
-            display: inline-block;
-            height: 2px;
-            border: 0;
-            background-color: rgb(30,30,30);
-        }
-        .navigation-menu {
-            margin: 0;
-            width: 100vw;
-            grid-area: nav;
-            background-color: antiquewhite;
-            display: flex;
-            justify-content: space-around;
-        }
-        .menu-item {
-            display: grid;
-            grid-template-areas: 
-                "image"
-                "label";
-            font-size: 0.5em;
-            text-align: center;
-            width: 50px;
-            cursor: pointer;
-        }
-        .menu-item:hover {
-            opacity: 2;
-        }
-        .item-image {
-            grid-area: image;
-            width: 1.5rem;
-            height: 1.5rem;
-            margin: 0 auto;
-        }
-        .item-label {
-            grid-area: label;
-            text-align: center;
-        }
-        
-        ._forwardmap:hover {
-            text-decoration: underline;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/common.css}" />
+
+    <link rel="stylesheet" th:href="@{/css/navigation.css}" />
+    <link rel="stylesheet" th:href="@{/css/index.css}" />
 </head>
 <body>
 
     <input type="hidden" id="googleMapApiKey" th:value="${googleMapApiKey}" />
     <input type="hidden" id="contextRoot" th:value="${#httpServletRequest.contextPath}" />
 
-<form name="navigation" th:action="@{/}" method="post">
+<form name="navigation-form" id="navigation-form" class="navigation-form" th:action="@{/}" method="post">
     <nav id="navigation-menu" class="navigation-menu">
         <span id="nav-map" class="menu-item nav-map">
             <img th:src="@{/img/map_icon.svg}" class="item-image" />
@@ -281,7 +39,7 @@
     </nav>
 </form>
 
-<form>
+<form name="main-form" id="main-form" class="main-form">
     <main>
         <div id="search-box" class="search-box">
             <label class="start-position-area hidden">
@@ -331,9 +89,6 @@
                 </span>
             </li>
         </ul>
-        <div id="result-list-bottom-area" class="result-list-bottom-area">
-            <span id="expand-button" class="expand-button">∨</span>
-        </div>
         <div id="map" class="map"></div>
     </main>
 </form>
