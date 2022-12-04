@@ -4,7 +4,7 @@
  * GoogoleMapAPIから開始地点からの各距離の算出を行う。<br>
  * 距離の算出ができなくても、カフェリストの表示とマーカーの設定、GoogleMAPへの遷移処理は機能させる
  */
-async function search(){
+ async function search(){
 
 	// 検索される度にリストやマーカーが追加されるため、一旦クリア
 	cafeList.clearCafeList();
@@ -169,7 +169,6 @@ class CafeList {
 	#resultListArea = null;
 	#distanceFilter = null;
 	#distanceSort = null;
-	#expandButton = null;
 
 	constructor(){
 		const _self = this;
@@ -177,15 +176,11 @@ class CafeList {
 			this.#resultListArea = document.getElementById("result-list");
 			this.#distanceFilter = document.getElementById("distance-filter-select");
 			this.#distanceSort = document.getElementById("distance-sort-select");
-			this.#expandButton = document.getElementById("expand-button");
 			this.#distanceFilter.addEventListener("click", () => {
 				this.filter();
 			});
 			this.#distanceSort.addEventListener("click", () => {
 				this.sort();
-			});
-			this.#expandButton.addEventListener("click", () => {
-				this.toggleExpandList();
 			});
 			this.forwardImg = "./img/forward.svg";
 		});
@@ -383,19 +378,6 @@ class CafeList {
 	resetFilter(){
 		this.#distanceFilter.value = -1;
 		this.filter();
-	}
-	toggleExpandList(){
-		// const resultList = this.#resultListArea.getElementsByClassName("result-list")[0];
-		// if( !resultList){
-		// 	return;
-		// }
-		if(this.#expandButton.classList.contains("isExpand")){
-			this.#resultListArea.classList.remove("expand");
-			this.#expandButton.classList.remove("isExpand");
-		}else{
-			this.#resultListArea.classList.add("expand");
-			this.#expandButton.classList.add("isExpand");
-		}
 	}
 }
 
