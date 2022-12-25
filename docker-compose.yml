@@ -1,15 +1,30 @@
 version: '3.6'
 services:
-  web:
-    container_name: cafelog-java
-    image: takku66/cafelog
+  backend:
+    container_name: backend
+    # image: takku66/cafelog
+    build: .
     ports:
       - 8888:8080
+    volumes:
+      - .:/srv:cached
     depends_on:
       - db
+    tty: true
     restart: always
+  frontend:
+    container_name: frontend
+    build: ./vue
+    ports:
+      - 9000:8080
+    volumes:
+      # - ./vue:/usr/src/app:cached
+      - ./vue:/usr/src/app:consistent
+    stdin_open: true
+    tty: true
+    command: yarn serve
   db:
-    container_name: cafelog-postgres
+    container_name: postgres
     image: postgres:14.0
     volumes:
       - ./docker/pg/data:/var/lib/postgresql/data
@@ -21,22 +36,22 @@ services:
     ports:
       - 5433:5432
     restart: always
-  https-portal:
-    image: steveltn/https-portal:1
-    ports:
-            - 80:80
-            - 443:443
-    links:
-            - web
-    restart: always
-    environment:
-      # DOMAINS: '35.197.22.32 -> http://web:8080'
-      DOMAINS: 'localhost -> http://web:8080'
-      STAGE: 'production' # Don't use production until staging works
-      #FORCE_RENEW: 'true'
-    container_name: https-portal
-    volumes:
-            - ./ssl_certs:/var/lib/https-portal
-volumes:
-    ssl_certs:
+#   https-portal:
+#     image: steveltn/https-portal:1
+#     ports:
+#             - 80:80
+#             - 443:443
+#     links:
+#             - backend
+#     restart: always
+#     environment:
+#       # DOMAINS: '35.197.22.32 -> http://backend:8080'
+#       DOMAINS: 'localhost -> http://backend:8080'
+#       # STAGE: 'production' # Don't use production until staging works
+#       #FORCE_RENEW: 'true'
+#     container_name: https-portal
+#     volumes:
+#             - ./ssl_certs:/var/lib/https-portal
+# volumes:
+#     ssl_certs:
   
